@@ -157,3 +157,12 @@ session.query("id", "name", "thenumber12").\
                 "thenumber12 FROM users where name=:name").\
                 params(name='ed').all()
 
+session.query(User).filter(User.name.like('%ed')).count() #doctest: +NORMALIZE_WHITESPACE
+
+from sqlalchemy import func
+session.query(func.count(User.name), User.name).group_by(User.name).all()  #doctest: +NORMALIZE_WHITESPACE
+
+session.query(func.count('*')).select_from(User).scalar()
+
+session.query(func.count(User.id)).scalar() #doctest: +NORMALIZE_WHITESPACE
+

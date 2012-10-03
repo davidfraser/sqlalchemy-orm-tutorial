@@ -244,3 +244,18 @@ fred
 ...                 params(name='ed').all()
 [(1, u'ed', 12)]
 
+Counting
+
+>>> session.query(User).filter(User.name.like('%ed')).count() #doctest: +NORMALIZE_WHITESPACE
+2
+
+>>> from sqlalchemy import func
+>>> session.query(func.count(User.name), User.name).group_by(User.name).all()  #doctest: +NORMALIZE_WHITESPACE
+[(1, u'ed'), (1, u'fred'), (1, u'mary'), (1, u'wendy')]
+
+>>> session.query(func.count('*')).select_from(User).scalar()
+4
+
+>>> session.query(func.count(User.id)).scalar() #doctest: +NORMALIZE_WHITESPACE
+4
+
