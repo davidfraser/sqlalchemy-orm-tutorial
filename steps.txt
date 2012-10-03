@@ -382,3 +382,25 @@ jack
 ...         filter(~Address.user.has(User.name=='jack')).all() 
 []
 
+Relationship operators
+
+>>> session.query(Address.email_address).\
+...         filter(Address.user == jack).\
+...         filter(Address.user != ed_user).\
+...         order_by(Address.id).all() 
+[(u'jack@google.com',), (u'j25@yahoo.com',)]
+
+>>> session.query(User.name).\
+...         filter(User.addresses.contains(address)).\
+...         filter(User.addresses.any(Address.email_address.like('%yahoo.com'))).\
+...         order_by(User.id).scalar() 
+u'jack'
+
+>>> session.query(Address.email_address).\
+...         filter(Address.user.has(name='ed')).\
+...         count()
+0
+
+>>> session.query(Address).with_parent(jack, 'addresses').count()
+2
+

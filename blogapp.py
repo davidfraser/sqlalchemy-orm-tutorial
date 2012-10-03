@@ -259,3 +259,19 @@ for name, in session.query(User.name).\
 session.query(Address).\
         filter(~Address.user.has(User.name=='jack')).all()
 
+session.query(Address.email_address).\
+        filter(Address.user == jack).\
+        filter(Address.user != ed_user).\
+        order_by(Address.id).all()
+
+session.query(User.name).\
+        filter(User.addresses.contains(address)).\
+        filter(User.addresses.any(Address.email_address.like('%yahoo.com'))).\
+        order_by(User.id).scalar()
+
+session.query(Address.email_address).\
+        filter(Address.user.has(name='ed')).\
+        count()
+
+session.query(Address).with_parent(jack, 'addresses').count()
+
