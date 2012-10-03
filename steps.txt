@@ -107,3 +107,26 @@ False
 >>> session.query(User).filter(User.name.in_(['ed', 'fakeuser'])).all() #doctest: +NORMALIZE_WHITESPACE
 [<User('ed','Ed Jones', 'f8s7ccs')>]
 
+Querying, objects or named tuples:
+
+>>> for instance in session.query(User).order_by(User.id): # doctest: +NORMALIZE_WHITESPACE
+...     print instance.name, instance.fullname
+ed Ed Jones
+wendy Wendy Williams
+mary Mary Contrary
+fred Fred Flinstone
+
+>>> for name, fullname in session.query(User.name, User.fullname): # doctest: +NORMALIZE_WHITESPACE
+...     print name, fullname
+ed Ed Jones
+wendy Wendy Williams
+mary Mary Contrary
+fred Fred Flinstone
+
+>>> for row in session.query(User, User.name).all(): #doctest: +NORMALIZE_WHITESPACE
+...    print row.User, row.name
+<User('ed','Ed Jones', 'f8s7ccs')> ed
+<User('wendy','Wendy Williams', 'foobar')> wendy
+<User('mary','Mary Contrary', 'xxg527')> mary
+<User('fred','Fred Flinstone', 'blah')> fred
+

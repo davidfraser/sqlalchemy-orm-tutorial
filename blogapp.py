@@ -72,3 +72,12 @@ fake_user in session
 
 session.query(User).filter(User.name.in_(['ed', 'fakeuser'])).all() #doctest: +NORMALIZE_WHITESPACE
 
+for instance in session.query(User).order_by(User.id): # doctest: +NORMALIZE_WHITESPACE
+    print instance.name, instance.fullname
+
+for name, fullname in session.query(User.name, User.fullname): # doctest: +NORMALIZE_WHITESPACE
+    print name, fullname
+
+for row in session.query(User, User.name).all(): #doctest: +NORMALIZE_WHITESPACE
+   print row.User, row.name
+
