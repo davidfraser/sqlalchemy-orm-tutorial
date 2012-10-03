@@ -215,3 +215,31 @@ session.query(User).join(Address).\
         filter(Address.email_address=='jack@google.com').\
         all() #doctest: +NORMALIZE_WHITESPACE
 
+from sqlalchemy.orm import aliased
+adalias1 = aliased(Address)
+adalias2 = aliased(Address)
+for username, email1, email2 in \
+    session.query(User.name, adalias1.email_address, adalias2.email_address).\
+    join(adalias1, User.addresses).\
+    join(adalias2, User.addresses).\
+    filter(adalias1.email_address=='jack@google.com').\
+    filter(adalias2.email_address=='j25@yahoo.com'):
+    print username, email1, email2      # doctest: +NORMALIZE_WHITESPACE
+
+from sqlalchemy.sql import func
+stmt = session.query(Address.user_id, func.count('*').\
+        label('address_count')).\
+        group_by(Address.user_id).subquery()
+
+for u, count in session.query(User, stmt.c.address_count).\
+    outerjoin(stmt, User.id==stmt.c.user_id).order_by(User.id): # doctest: +NORMALIZE_WHITESPACE
+    print u, count
+
+stmt = session.query(Address).\
+                filter(Address.email_address != 'j25@yahoo.com').\
+                subquery()
+adalias = aliased(Address, stmt)
+for user, address in session.query(User, adalias).\
+        join(adalias, User.addresses):
+    print user, address
+
