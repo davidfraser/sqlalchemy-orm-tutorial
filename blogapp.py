@@ -89,3 +89,19 @@ user_alias = aliased(User, name='user_alias')
 for row in session.query(user_alias, user_alias.name).all(): #doctest: +NORMALIZE_WHITESPACE
    print row.user_alias
 
+for u in session.query(User).order_by(User.id)[1:3]: #doctest: +NORMALIZE_WHITESPACE
+   print u
+
+for name, in session.query(User.name).\
+            filter_by(fullname='Ed Jones'): # doctest: +NORMALIZE_WHITESPACE
+   print name
+
+for name, in session.query(User.name).\
+            filter(User.fullname=='Ed Jones'): # doctest: +NORMALIZE_WHITESPACE
+   print name
+
+for user in session.query(User).\
+         filter(User.name=='ed').\
+         filter(User.fullname=='Ed Jones'): # doctest: +NORMALIZE_WHITESPACE
+   print user
+

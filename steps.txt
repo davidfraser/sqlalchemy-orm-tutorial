@@ -148,3 +148,24 @@ fred
 <User('mary','Mary Contrary', 'xxg527')>
 <User('fred','Fred Flinstone', 'blah')>
 
+>>> for u in session.query(User).order_by(User.id)[1:3]: #doctest: +NORMALIZE_WHITESPACE
+...    print u
+<User('wendy','Wendy Williams', 'foobar')>
+<User('mary','Mary Contrary', 'xxg527')>
+
+>>> for name, in session.query(User.name).\
+...             filter_by(fullname='Ed Jones'): # doctest: +NORMALIZE_WHITESPACE
+...    print name
+ed
+
+>>> for name, in session.query(User.name).\
+...             filter(User.fullname=='Ed Jones'): # doctest: +NORMALIZE_WHITESPACE
+...    print name
+ed
+
+>>> for user in session.query(User).\
+...          filter(User.name=='ed').\
+...          filter(User.fullname=='Ed Jones'): # doctest: +NORMALIZE_WHITESPACE
+...    print user
+<User('ed','Ed Jones', 'f8s7ccs')>
+
