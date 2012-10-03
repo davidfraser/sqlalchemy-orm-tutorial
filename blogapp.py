@@ -39,3 +39,13 @@ ed_user.name
 ed_user.password
 str(ed_user.id)
 
+from sqlalchemy.orm import sessionmaker
+Session = sessionmaker(bind=engine)
+session = Session()
+
+ed_user = User('ed', 'Ed Jones', 'edspassword')
+session.add(ed_user)
+
+our_user = session.query(User).filter_by(name='ed').first() # doctest:+ELLIPSIS,+NORMALIZE_WHITESPACE
+our_user
+
