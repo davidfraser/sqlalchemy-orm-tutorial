@@ -140,3 +140,20 @@ try: #doctest: +NORMALIZE_WHITESPACE
 except NoResultFound, e:
     print e
 
+for user in session.query(User).\
+            filter("id<224").\
+            order_by("id").all(): #doctest: +NORMALIZE_WHITESPACE
+    print user.name
+
+session.query(User).filter("id<:value and name=:name").\
+    params(value=224, name='fred').order_by(User.id).one() # doctest: +NORMALIZE_WHITESPACE
+
+session.query(User).from_statement(
+                    "SELECT * FROM users where name=:name").\
+                    params(name='ed').all()
+
+session.query("id", "name", "thenumber12").\
+        from_statement("SELECT id, name, 12 as "
+                "thenumber12 FROM users where name=:name").\
+                params(name='ed').all()
+

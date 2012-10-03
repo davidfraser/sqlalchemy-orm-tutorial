@@ -218,3 +218,29 @@ Multiple rows were found for one()
 ...     print e
 No row was found for one()
 
+Literal SQL being interspersed with generated:
+
+>>> for user in session.query(User).\
+...             filter("id<224").\
+...             order_by("id").all(): #doctest: +NORMALIZE_WHITESPACE
+...     print user.name
+ed
+wendy
+mary
+fred
+
+>>> session.query(User).filter("id<:value and name=:name").\
+...     params(value=224, name='fred').order_by(User.id).one() # doctest: +NORMALIZE_WHITESPACE
+<User('fred','Fred Flinstone', 'blah')>
+
+>>> session.query(User).from_statement(
+...                     "SELECT * FROM users where name=:name").\
+...                     params(name='ed').all()
+[<User('ed','Ed Jones', 'f8s7ccs')>]
+
+>>> session.query("id", "name", "thenumber12").\
+...         from_statement("SELECT id, name, 12 as "
+...                 "thenumber12 FROM users where name=:name").\
+...                 params(name='ed').all()
+[(1, u'ed', 12)]
+
