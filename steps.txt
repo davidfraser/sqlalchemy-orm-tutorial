@@ -307,3 +307,17 @@ Working with related records
 >>> jack.addresses #doctest: +NORMALIZE_WHITESPACE
 [<Address('jack@google.com')>, <Address('j25@yahoo.com')>]
 
+Querying with joins
+
+>>> for u, a in session.query(User, Address).\
+...                     filter(User.id==Address.user_id).\
+...                     filter(Address.email_address=='jack@google.com').\
+...                     all():   # doctest: +NORMALIZE_WHITESPACE
+...     print u, a
+<User('jack','Jack Bean', 'gjffdd')> <Address('jack@google.com')>
+
+>>> session.query(User).join(Address).\
+...         filter(Address.email_address=='jack@google.com').\
+...         all() #doctest: +NORMALIZE_WHITESPACE
+[<User('jack','Jack Bean', 'gjffdd')>]
+

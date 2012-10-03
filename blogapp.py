@@ -205,3 +205,13 @@ jack
 
 jack.addresses #doctest: +NORMALIZE_WHITESPACE
 
+for u, a in session.query(User, Address).\
+                    filter(User.id==Address.user_id).\
+                    filter(Address.email_address=='jack@google.com').\
+                    all():   # doctest: +NORMALIZE_WHITESPACE
+    print u, a
+
+session.query(User).join(Address).\
+        filter(Address.email_address=='jack@google.com').\
+        all() #doctest: +NORMALIZE_WHITESPACE
+
