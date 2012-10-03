@@ -439,4 +439,36 @@ Eager loading
 >>> jacks_addresses[0].user
 <User('jack','Jack Bean', 'gjffdd')>
 
+Deleting and cascading
+
+>>> session.delete(jack)
+>>> session.query(User).filter_by(name='jack').count()
+0
+
+>>> session.query(Address).filter(
+...     Address.email_address.in_(['jack@google.com', 'j25@yahoo.com'])
+...  ).count()
+2
+
+>>> session.rollback()
+>>> session.close()
+>>> session.query(User).filter_by(name='jack').count()
+1
+
+Reconstructing without a new Base
+
+>>> User.cascading_addresses = relationship("Address", backref='cascading_user', cascade="all, delete, delete-orphan")
+
+# load Jack by primary key
+>>> jack = session.query(User).get(5)
+
+# remove one Address (lazy load fires off)
+>>> del jack.cascading_addresses[1]
+
+# only one address remains
+>>> session.query(Address).filter(
+...     Address.email_address.in_(['jack@google.com', 'j25@yahoo.com'])
+... ).count()
+1
+
 

@@ -302,3 +302,24 @@ jacks_addresses
 
 jacks_addresses[0].user
 
+session.delete(jack)
+session.query(User).filter_by(name='jack').count()
+
+session.query(Address).filter(
+    Address.email_address.in_(['jack@google.com', 'j25@yahoo.com'])
+ ).count()
+
+session.rollback()
+session.close()
+session.query(User).filter_by(name='jack').count()
+
+User.cascading_addresses = relationship("Address", backref='cascading_user', cascade="all, delete, delete-orphan")
+
+jack = session.query(User).get(5)
+
+del jack.cascading_addresses[1]
+
+session.query(Address).filter(
+    Address.email_address.in_(['jack@google.com', 'j25@yahoo.com'])
+).count()
+
