@@ -34,3 +34,8 @@ User.__mapper__ # doctest: +ELLIPSIS
 
 Base.metadata.create_all(engine)
 
+ed_user = User('ed', 'Ed Jones', 'edspassword')
+ed_user.name
+ed_user.password
+str(ed_user.id)
+

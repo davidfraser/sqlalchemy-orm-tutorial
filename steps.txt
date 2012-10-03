@@ -52,3 +52,14 @@ Actually creating the table:
 
 >>> Base.metadata.create_all(engine)
 
+An ORM record:
+
+>>> ed_user = User('ed', 'Ed Jones', 'edspassword')
+>>> ed_user.name
+'ed'
+>>> ed_user.password
+'edspassword'
+>>> str(ed_user.id)
+'None'
+
+
