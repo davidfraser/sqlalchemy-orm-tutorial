@@ -81,3 +81,11 @@ for name, fullname in session.query(User.name, User.fullname): # doctest: +NORMA
 for row in session.query(User, User.name).all(): #doctest: +NORMALIZE_WHITESPACE
    print row.User, row.name
 
+for row in session.query(User.name.label('name_label')).all(): #doctest: +NORMALIZE_WHITESPACE
+   print(row.name_label)
+
+from sqlalchemy.orm import aliased
+user_alias = aliased(User, name='user_alias')
+for row in session.query(user_alias, user_alias.name).all(): #doctest: +NORMALIZE_WHITESPACE
+   print row.user_alias
+

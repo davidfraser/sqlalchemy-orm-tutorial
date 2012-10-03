@@ -130,3 +130,21 @@ fred Fred Flinstone
 <User('mary','Mary Contrary', 'xxg527')> mary
 <User('fred','Fred Flinstone', 'blah')> fred
 
+Aliasing query results:
+
+>>> for row in session.query(User.name.label('name_label')).all(): #doctest: +NORMALIZE_WHITESPACE
+...    print(row.name_label)
+ed
+wendy
+mary
+fred
+
+>>> from sqlalchemy.orm import aliased
+>>> user_alias = aliased(User, name='user_alias')
+>>> for row in session.query(user_alias, user_alias.name).all(): #doctest: +NORMALIZE_WHITESPACE
+...    print row.user_alias
+<User('ed','Ed Jones', 'f8s7ccs')>
+<User('wendy','Wendy Williams', 'foobar')>
+<User('mary','Mary Contrary', 'xxg527')>
+<User('fred','Fred Flinstone', 'blah')>
+
