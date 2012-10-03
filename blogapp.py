@@ -123,3 +123,20 @@ print session.query(User.name).filter(
             User.password.like('%b%'))).\
         order_by(User.name).all()
 
+query = session.query(User).filter(User.name.like('%ed')).order_by(User.id)
+query.all() #doctest: +NORMALIZE_WHITESPACE
+
+query.first() #doctest: +NORMALIZE_WHITESPACE
+
+from sqlalchemy.orm.exc import MultipleResultsFound
+try: #doctest: +NORMALIZE_WHITESPACE
+    user = query.one()
+except MultipleResultsFound, e:
+    print e
+
+from sqlalchemy.orm.exc import NoResultFound
+try: #doctest: +NORMALIZE_WHITESPACE
+    user = query.filter(User.id == 99).one()
+except NoResultFound, e:
+    print e
+

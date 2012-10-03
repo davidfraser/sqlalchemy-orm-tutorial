@@ -195,3 +195,26 @@ WHERE users.name IS NULL AND users.fullname IS NOT NULL
 ...         order_by(User.name).all()
 [(u'fred',), (u'wendy',)]
 
+Different methods for handling results, requiring unique results etc:
+
+>>> query = session.query(User).filter(User.name.like('%ed')).order_by(User.id)
+>>> query.all() #doctest: +NORMALIZE_WHITESPACE
+[<User('ed','Ed Jones', 'f8s7ccs')>, <User('fred','Fred Flinstone', 'blah')>]
+
+>>> query.first() #doctest: +NORMALIZE_WHITESPACE
+<User('ed','Ed Jones', 'f8s7ccs')>
+
+>>> from sqlalchemy.orm.exc import MultipleResultsFound
+>>> try: #doctest: +NORMALIZE_WHITESPACE
+...     user = query.one()
+... except MultipleResultsFound, e:
+...     print e
+Multiple rows were found for one()
+
+>>> from sqlalchemy.orm.exc import NoResultFound
+>>> try: #doctest: +NORMALIZE_WHITESPACE
+...     user = query.filter(User.id == 99).one()
+... except NoResultFound, e:
+...     print e
+No row was found for one()
+
