@@ -75,3 +75,19 @@ An ORM record:
 >>> ed_user is our_user
 True
 
+>>> session.add_all([
+...     User('wendy', 'Wendy Williams', 'foobar'),
+...     User('mary', 'Mary Contrary', 'xxg527'),
+...     User('fred', 'Fred Flinstone', 'blah')])
+>>> ed_user.password = 'f8s7ccs'
+>>> session.dirty
+IdentitySet([<User('ed','Ed Jones', 'f8s7ccs')>])
+>>> session.new  # doctest: +SKIP
+IdentitySet([<User('wendy','Wendy Williams', 'foobar')>,
+<User('mary','Mary Contrary', 'xxg527')>,
+<User('fred','Fred Flinstone', 'blah')>])
+>>> session.commit()
+
+>>> ed_user.id # doctest: +NORMALIZE_WHITESPACE
+1
+

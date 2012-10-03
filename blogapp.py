@@ -43,9 +43,20 @@ from sqlalchemy.orm import sessionmaker
 Session = sessionmaker(bind=engine)
 session = Session()
 
-ed_user = User('ed', 'Ed Jones', 'edspassword')
 session.add(ed_user)
 
 our_user = session.query(User).filter_by(name='ed').first() # doctest:+ELLIPSIS,+NORMALIZE_WHITESPACE
 our_user
+ed_user is our_user
+
+session.add_all([
+    User('wendy', 'Wendy Williams', 'foobar'),
+    User('mary', 'Mary Contrary', 'xxg527'),
+    User('fred', 'Fred Flinstone', 'blah')])
+ed_user.password = 'f8s7ccs'
+session.dirty
+session.new  # doctest: +SKIP
+session.commit()
+
+ed_user.id # doctest: +NORMALIZE_WHITESPACE
 
