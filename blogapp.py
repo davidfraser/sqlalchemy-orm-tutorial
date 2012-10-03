@@ -105,3 +105,21 @@ for user in session.query(User).\
          filter(User.fullname=='Ed Jones'): # doctest: +NORMALIZE_WHITESPACE
    print user
 
+session.query(User.fullname).\
+         filter(User.name != 'wendy').\
+         filter(User.name.like('%d%')).\
+         filter(User.name.in_(['fred', 'mary'])).\
+         filter(~User.name.in_(['jack'])).\
+         order_by(User.id).all()
+
+print session.query(User.name, User.name.in_(session.query(User.name).filter(User.name.like('%ed%')))).order_by('name').all()
+
+print str(session.query(User.id).filter(User.name == None).filter(User.fullname != None))
+
+from sqlalchemy import and_, or_
+print session.query(User.name).filter(
+        and_(
+            or_(User.name.like('%ed%'), User.fullname.like('%y %')),
+            User.password.like('%b%'))).\
+        order_by(User.name).all()
+
