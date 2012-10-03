@@ -91,3 +91,19 @@ IdentitySet([<User('wendy','Wendy Williams', 'foobar')>,
 >>> ed_user.id # doctest: +NORMALIZE_WHITESPACE
 1
 
+>>> ed_user.name = 'Edwardo'
+>>> fake_user = User('fakeuser', 'Invalid', '12345')
+>>> session.add(fake_user)
+
+>>> session.query(User).filter(User.name.in_(['Edwardo', 'fakeuser'])).all() #doctest: +NORMALIZE_WHITESPACE
+[<User('Edwardo','Ed Jones', 'f8s7ccs')>, <User('fakeuser','Invalid', '12345')>]
+
+>>> session.rollback()
+>>> ed_user.name #doctest: +NORMALIZE_WHITESPACE
+u'ed'
+>>> fake_user in session
+False
+
+>>> session.query(User).filter(User.name.in_(['ed', 'fakeuser'])).all() #doctest: +NORMALIZE_WHITESPACE
+[<User('ed','Ed Jones', 'f8s7ccs')>]
+

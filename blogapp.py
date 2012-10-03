@@ -60,3 +60,15 @@ session.commit()
 
 ed_user.id # doctest: +NORMALIZE_WHITESPACE
 
+ed_user.name = 'Edwardo'
+fake_user = User('fakeuser', 'Invalid', '12345')
+session.add(fake_user)
+
+session.query(User).filter(User.name.in_(['Edwardo', 'fakeuser'])).all() #doctest: +NORMALIZE_WHITESPACE
+
+session.rollback()
+ed_user.name #doctest: +NORMALIZE_WHITESPACE
+fake_user in session
+
+session.query(User).filter(User.name.in_(['ed', 'fakeuser'])).all() #doctest: +NORMALIZE_WHITESPACE
+
