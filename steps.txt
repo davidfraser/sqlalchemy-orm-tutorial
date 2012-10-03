@@ -404,3 +404,39 @@ u'jack'
 >>> session.query(Address).with_parent(jack, 'addresses').count()
 2
 
+Eager loading
+
+>>> from sqlalchemy.orm import subqueryload
+>>> jack = session.query(User).\
+...                 options(subqueryload(User.addresses)).\
+...                 filter_by(name='jack').one() #doctest: +NORMALIZE_WHITESPACE
+>>> jack
+<User('jack','Jack Bean', 'gjffdd')>
+
+>>> jack.addresses
+[<Address('jack@google.com')>, <Address('j25@yahoo.com')>]
+
+>>> from sqlalchemy.orm import joinedload
+
+>>> jack = session.query(User).\
+...                        options(joinedload(User.addresses)).\
+...                        filter_by(name='jack').one() 
+>>> jack
+<User('jack','Jack Bean', 'gjffdd')>
+
+>>> jack.addresses
+[<Address('jack@google.com')>, <Address('j25@yahoo.com')>]
+
+>>> from sqlalchemy.orm import contains_eager
+>>> jacks_addresses = session.query(Address).\
+...                             join(Address.user).\
+...                             filter(User.name=='jack').\
+...                             options(contains_eager(Address.user)).\
+...                             all() 
+>>> jacks_addresses
+[<Address('jack@google.com')>, <Address('j25@yahoo.com')>]
+
+>>> jacks_addresses[0].user
+<User('jack','Jack Bean', 'gjffdd')>
+
+

@@ -275,3 +275,30 @@ session.query(Address.email_address).\
 
 session.query(Address).with_parent(jack, 'addresses').count()
 
+from sqlalchemy.orm import subqueryload
+jack = session.query(User).\
+                options(subqueryload(User.addresses)).\
+                filter_by(name='jack').one() #doctest: +NORMALIZE_WHITESPACE
+jack
+
+jack.addresses
+
+from sqlalchemy.orm import joinedload
+
+jack = session.query(User).\
+                       options(joinedload(User.addresses)).\
+                       filter_by(name='jack').one()
+jack
+
+jack.addresses
+
+from sqlalchemy.orm import contains_eager
+jacks_addresses = session.query(Address).\
+                            join(Address.user).\
+                            filter(User.name=='jack').\
+                            options(contains_eager(Address.user)).\
+                            all()
+jacks_addresses
+
+jacks_addresses[0].user
+
