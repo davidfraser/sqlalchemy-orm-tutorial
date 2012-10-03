@@ -280,3 +280,30 @@ Relationships
 
 >>> Base.metadata.create_all(engine) # doctest: +NORMALIZE_WHITESPACE
 
+Working with related records
+
+>>> jack = User('jack', 'Jack Bean', 'gjffdd')
+>>> jack.addresses
+[]
+
+>>> jack.addresses = [
+...                 Address(email_address='jack@google.com'),
+...                 Address(email_address='j25@yahoo.com')]
+
+>>> jack.addresses[1]
+<Address('j25@yahoo.com')>
+
+>>> jack.addresses[1].user
+<User('jack','Jack Bean', 'gjffdd')>
+
+>>> session.add(jack)
+>>> session.commit()
+
+>>> jack = session.query(User).\
+... filter_by(name='jack').one() #doctest: +NORMALIZE_WHITESPACE
+>>> jack
+<User('jack','Jack Bean', 'gjffdd')>
+
+>>> jack.addresses #doctest: +NORMALIZE_WHITESPACE
+[<Address('jack@google.com')>, <Address('j25@yahoo.com')>]
+

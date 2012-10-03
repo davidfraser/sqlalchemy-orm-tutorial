@@ -185,3 +185,23 @@ class Address(Base):
 
 Base.metadata.create_all(engine) # doctest: +NORMALIZE_WHITESPACE
 
+jack = User('jack', 'Jack Bean', 'gjffdd')
+jack.addresses
+
+jack.addresses = [
+                Address(email_address='jack@google.com'),
+                Address(email_address='j25@yahoo.com')]
+
+jack.addresses[1]
+
+jack.addresses[1].user
+
+session.add(jack)
+session.commit()
+
+jack = session.query(User).\
+filter_by(name='jack').one() #doctest: +NORMALIZE_WHITESPACE
+jack
+
+jack.addresses #doctest: +NORMALIZE_WHITESPACE
+
