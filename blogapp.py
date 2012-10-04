@@ -1,15 +1,25 @@
 #!/usr/bin/env python
 
+# To run these tests, simply run steps.py (with -v as an option if you want to see more details)
+
 import sqlalchemy
 sqlalchemy.__version__
+
+# How to connect using a database URL - you may want to use echo=True for manual testing
 
 from sqlalchemy import create_engine
 engine = create_engine('sqlite:///:memory:', echo=True)
 
+# Running a simple SQL statement directly on the connection
+
 engine.execute("select 1").scalar()
+
+# Importing declarative and setting up a base class:
 
 from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
+
+# Our first ORM record class:
 
 from sqlalchemy import Column, Integer, String
 class User(Base):
@@ -32,7 +42,11 @@ User.__table__
 
 User.__mapper__
 
+# Actually creating the table:
+
 Base.metadata.create_all(engine)
+
+# An ORM record:
 
 ed_user = User('ed', 'Ed Jones', 'edspassword')
 ed_user.name
@@ -72,6 +86,8 @@ fake_user in session
 
 session.query(User).filter(User.name.in_(['ed', 'fakeuser'])).all()
 
+# Querying, objects or named tuples:
+
 for instance in session.query(User).order_by(User.id):
     print instance.name, instance.fullname
 
@@ -80,6 +96,8 @@ for name, fullname in session.query(User.name, User.fullname):
 
 for row in session.query(User, User.name).all():
    print row.User, row.name
+
+# Aliasing query results:
 
 for row in session.query(User.name.label('name_label')).all():
    print(row.name_label)
@@ -105,6 +123,8 @@ for user in session.query(User).\
          filter(User.fullname=='Ed Jones'):
    print user
 
+# Combination of some common filter operations, demonstrating the SQL that they produce:
+
 session.query(User.fullname).\
          filter(User.name != 'wendy').\
          filter(User.name.like('%d%')).\
@@ -123,6 +143,8 @@ print session.query(User.name).filter(
             User.password.like('%b%'))).\
         order_by(User.name).all()
 
+# Different methods for handling results, requiring unique results etc:
+
 query = session.query(User).filter(User.name.like('%ed')).order_by(User.id)
 query.all()
 
@@ -139,6 +161,8 @@ try:
     user = query.filter(User.id == 99).one()
 except NoResultFound, e:
     print e
+
+# Literal SQL being interspersed with generated:
 
 for user in session.query(User).\
             filter("id<224").\
@@ -157,6 +181,8 @@ session.query("id", "name", "thenumber12").\
                 "thenumber12 FROM users where name=:name").\
                 params(name='ed').all()
 
+# Counting
+
 session.query(User).filter(User.name.like('%ed')).count()
 
 from sqlalchemy import func
@@ -165,6 +191,8 @@ session.query(func.count(User.name), User.name).group_by(User.name).all()
 session.query(func.count('*')).select_from(User).scalar()
 
 session.query(func.count(User.id)).scalar()
+
+# Relationships
 
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship, backref
@@ -184,6 +212,8 @@ class Address(Base):
         return "<Address('%s')>" % self.email_address
 
 Base.metadata.create_all(engine)
+
+# Working with related records
 
 jack = User('jack', 'Jack Bean', 'gjffdd')
 jack.addresses
@@ -205,6 +235,8 @@ jack
 
 jack.addresses
 
+# Querying with joins
+
 for u, a in session.query(User, Address).\
                     filter(User.id==Address.user_id).\
                     filter(Address.email_address=='jack@google.com').\
@@ -214,6 +246,8 @@ for u, a in session.query(User, Address).\
 session.query(User).join(Address).\
         filter(Address.email_address=='jack@google.com').\
         all()
+
+# Table aliases
 
 from sqlalchemy.orm import aliased
 adalias1 = aliased(Address)
@@ -225,6 +259,8 @@ for username, email1, email2 in \
     filter(adalias1.email_address=='jack@google.com').\
     filter(adalias2.email_address=='j25@yahoo.com'):
     print username, email1, email2
+
+# Subqueries: users with address record counts
 
 from sqlalchemy.sql import func
 stmt = session.query(Address.user_id, func.count('*').\
@@ -243,6 +279,8 @@ for user, address in session.query(User, adalias).\
         join(adalias, User.addresses):
     print user, address
 
+# Exists
+
 from sqlalchemy.sql import exists
 stmt = exists().where(Address.user_id==User.id)
 for name, in session.query(User.name).filter(stmt):
@@ -259,6 +297,8 @@ for name, in session.query(User.name).\
 session.query(Address).\
         filter(~Address.user.has(User.name=='jack')).all()
 
+# Relationship operators
+
 session.query(Address.email_address).\
         filter(Address.user == jack).\
         filter(Address.user != ed_user).\
@@ -274,6 +314,8 @@ session.query(Address.email_address).\
         count()
 
 session.query(Address).with_parent(jack, 'addresses').count()
+
+# Eager loading
 
 from sqlalchemy.orm import subqueryload
 jack = session.query(User).\
@@ -302,6 +344,8 @@ jacks_addresses
 
 jacks_addresses[0].user
 
+# Deleting and cascading
+
 session.delete(jack)
 session.query(User).filter_by(name='jack').count()
 
@@ -313,15 +357,22 @@ session.rollback()
 session.close()
 session.query(User).filter_by(name='jack').count()
 
+# Reconstructing without a new Base
+
 User.cascading_addresses = relationship("Address", backref='cascading_user', cascade="all, delete, delete-orphan")
 
+# load Jack by primary key
 jack = session.query(User).get(5)
 
+# remove one Address (lazy load fires off)
 del jack.cascading_addresses[1]
 
+# only one address remains
 session.query(Address).filter(
     Address.email_address.in_(['jack@google.com', 'j25@yahoo.com'])
 ).count()
+
+# Many-to-many relationship
 
 from sqlalchemy import Table, Text
 # association table

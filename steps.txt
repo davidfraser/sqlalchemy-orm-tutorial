@@ -1,25 +1,25 @@
-To run these tests, simply run steps.py (with -v as an option if you want to see more details)
+# To run these tests, simply run steps.py (with -v as an option if you want to see more details)
 
 >>> import sqlalchemy
 >>> sqlalchemy.__version__ 
 '0.7.9'
 
-How to connect using a database URL - you may want to use echo=True for manual testing
+# How to connect using a database URL - you may want to use echo=True for manual testing
 
 >>> from sqlalchemy import create_engine
 >>> engine = create_engine('sqlite:///:memory:', echo=False)
 
-Running a simple SQL statement directly on the connection
+# Running a simple SQL statement directly on the connection
 
 >>> engine.execute("select 1").scalar()
 1
 
-Importing declarative and setting up a base class:
+# Importing declarative and setting up a base class:
 
 >>> from sqlalchemy.ext.declarative import declarative_base
 >>> Base = declarative_base()
 
-Our first ORM record class:
+# Our first ORM record class:
 
 >>> from sqlalchemy import Column, Integer, String
 >>> class User(Base):
@@ -48,11 +48,11 @@ Table('users', MetaData(bind=None),
 >>> User.__mapper__ # doctest: +ELLIPSIS
 <Mapper at 0x...; User>
 
-Actually creating the table:
+# Actually creating the table:
 
 >>> Base.metadata.create_all(engine)
 
-An ORM record:
+# An ORM record:
 
 >>> ed_user = User('ed', 'Ed Jones', 'edspassword')
 >>> ed_user.name
@@ -107,7 +107,7 @@ False
 >>> session.query(User).filter(User.name.in_(['ed', 'fakeuser'])).all() #doctest: +NORMALIZE_WHITESPACE
 [<User('ed','Ed Jones', 'f8s7ccs')>]
 
-Querying, objects or named tuples:
+# Querying, objects or named tuples:
 
 >>> for instance in session.query(User).order_by(User.id): # doctest: +NORMALIZE_WHITESPACE
 ...     print instance.name, instance.fullname
@@ -130,7 +130,7 @@ fred Fred Flinstone
 <User('mary','Mary Contrary', 'xxg527')> mary
 <User('fred','Fred Flinstone', 'blah')> fred
 
-Aliasing query results:
+# Aliasing query results:
 
 >>> for row in session.query(User.name.label('name_label')).all(): #doctest: +NORMALIZE_WHITESPACE
 ...    print(row.name_label)
@@ -169,7 +169,7 @@ ed
 ...    print user
 <User('ed','Ed Jones', 'f8s7ccs')>
 
-Combination of some common filter operations, demonstrating the SQL that they produce:
+# Combination of some common filter operations, demonstrating the SQL that they produce:
 
 >>> session.query(User.fullname).\
 ...          filter(User.name != 'wendy').\
@@ -195,7 +195,7 @@ WHERE users.name IS NULL AND users.fullname IS NOT NULL
 ...         order_by(User.name).all()
 [(u'fred',), (u'wendy',)]
 
-Different methods for handling results, requiring unique results etc:
+# Different methods for handling results, requiring unique results etc:
 
 >>> query = session.query(User).filter(User.name.like('%ed')).order_by(User.id)
 >>> query.all() #doctest: +NORMALIZE_WHITESPACE
@@ -218,7 +218,7 @@ Multiple rows were found for one()
 ...     print e
 No row was found for one()
 
-Literal SQL being interspersed with generated:
+# Literal SQL being interspersed with generated:
 
 >>> for user in session.query(User).\
 ...             filter("id<224").\
@@ -244,7 +244,7 @@ fred
 ...                 params(name='ed').all()
 [(1, u'ed', 12)]
 
-Counting
+# Counting
 
 >>> session.query(User).filter(User.name.like('%ed')).count() #doctest: +NORMALIZE_WHITESPACE
 2
@@ -259,7 +259,7 @@ Counting
 >>> session.query(func.count(User.id)).scalar() #doctest: +NORMALIZE_WHITESPACE
 4
 
-Relationships
+# Relationships
 
 >>> from sqlalchemy import ForeignKey
 >>> from sqlalchemy.orm import relationship, backref
@@ -280,7 +280,7 @@ Relationships
 
 >>> Base.metadata.create_all(engine) # doctest: +NORMALIZE_WHITESPACE
 
-Working with related records
+# Working with related records
 
 >>> jack = User('jack', 'Jack Bean', 'gjffdd')
 >>> jack.addresses
@@ -307,7 +307,7 @@ Working with related records
 >>> jack.addresses #doctest: +NORMALIZE_WHITESPACE
 [<Address('jack@google.com')>, <Address('j25@yahoo.com')>]
 
-Querying with joins
+# Querying with joins
 
 >>> for u, a in session.query(User, Address).\
 ...                     filter(User.id==Address.user_id).\
@@ -321,7 +321,7 @@ Querying with joins
 ...         all() #doctest: +NORMALIZE_WHITESPACE
 [<User('jack','Jack Bean', 'gjffdd')>]
 
-Table aliases
+# Table aliases
 
 >>> from sqlalchemy.orm import aliased
 >>> adalias1 = aliased(Address)
@@ -335,7 +335,7 @@ Table aliases
 ...     print username, email1, email2      # doctest: +NORMALIZE_WHITESPACE
 jack jack@google.com j25@yahoo.com
 
-Subqueries: users with address record counts
+# Subqueries: users with address record counts
 
 >>> from sqlalchemy.sql import func
 >>> stmt = session.query(Address.user_id, func.count('*').\
@@ -360,7 +360,7 @@ Subqueries: users with address record counts
 ...     print user, address
 <User('jack','Jack Bean', 'gjffdd')> <Address('jack@google.com')>
 
-Exists
+# Exists
 
 >>> from sqlalchemy.sql import exists
 >>> stmt = exists().where(Address.user_id==User.id)
@@ -382,7 +382,7 @@ jack
 ...         filter(~Address.user.has(User.name=='jack')).all() 
 []
 
-Relationship operators
+# Relationship operators
 
 >>> session.query(Address.email_address).\
 ...         filter(Address.user == jack).\
@@ -404,7 +404,7 @@ u'jack'
 >>> session.query(Address).with_parent(jack, 'addresses').count()
 2
 
-Eager loading
+# Eager loading
 
 >>> from sqlalchemy.orm import subqueryload
 >>> jack = session.query(User).\
@@ -439,7 +439,7 @@ Eager loading
 >>> jacks_addresses[0].user
 <User('jack','Jack Bean', 'gjffdd')>
 
-Deleting and cascading
+# Deleting and cascading
 
 >>> session.delete(jack)
 >>> session.query(User).filter_by(name='jack').count()
@@ -455,7 +455,7 @@ Deleting and cascading
 >>> session.query(User).filter_by(name='jack').count()
 1
 
-Reconstructing without a new Base
+# Reconstructing without a new Base
 
 >>> User.cascading_addresses = relationship("Address", backref='cascading_user', cascade="all, delete, delete-orphan")
 
@@ -471,7 +471,7 @@ Reconstructing without a new Base
 ... ).count()
 1
 
-Many-to-many relationship
+# Many-to-many relationship
 
 >>> from sqlalchemy import Table, Text
 >>> # association table
