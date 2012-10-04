@@ -24,17 +24,17 @@ Base = declarative_base()
 from sqlalchemy import Column, Integer, String
 class User(Base):
     __tablename__ = 'users'
-
+ 
     id = Column(Integer, primary_key=True)
     name = Column(String)
     fullname = Column(String)
     password = Column(String)
-
+ 
     def __init__(self, name, fullname, password):
         self.name = name
         self.fullname = fullname
         self.password = password
-
+ 
     def __repr__(self):
        return "<User('%s','%s', '%s')>" % (self.name, self.fullname, self.password)
 
@@ -202,12 +202,12 @@ class Address(Base):
     id = Column(Integer, primary_key=True)
     email_address = Column(String, nullable=False)
     user_id = Column(Integer, ForeignKey('users.id'))
-
+ 
     user = relationship("User", backref=backref('addresses', order_by=id))
-
+ 
     def __init__(self, email_address):
         self.email_address = email_address
-
+ 
     def __repr__(self):
         return "<Address('%s')>" % self.email_address
 
@@ -383,29 +383,29 @@ post_keywords = Table('post_keywords', Base.metadata,
 
 class BlogPost(Base):
     __tablename__ = 'posts'
-
+ 
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('users.id'))
     headline = Column(String(255), nullable=False)
     body = Column(Text)
-
+ 
     # many to many BlogPost<->Keyword
     keywords = relationship('Keyword', secondary=post_keywords, backref='posts')
-
+ 
     def __init__(self, headline, body, author):
         self.author = author
         self.headline = headline
         self.body = body
-
+ 
     def __repr__(self):
         return "BlogPost(%r, %r, %r)" % (self.headline, self.body, self.author)
 
 class Keyword(Base):
     __tablename__ = 'keywords'
-
+ 
     id = Column(Integer, primary_key=True)
     keyword = Column(String(50), nullable=False, unique=True)
-
+ 
     def __init__(self, keyword):
         self.keyword = keyword
 
