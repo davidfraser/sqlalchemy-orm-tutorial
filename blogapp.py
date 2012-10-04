@@ -4,7 +4,7 @@ import sqlalchemy
 sqlalchemy.__version__
 
 from sqlalchemy import create_engine
-engine = create_engine('sqlite:///:memory:', echo=False)
+engine = create_engine('sqlite:///:memory:', echo=True)
 
 engine.execute("select 1").scalar()
 
@@ -28,9 +28,9 @@ class User(Base):
     def __repr__(self):
        return "<User('%s','%s', '%s')>" % (self.name, self.fullname, self.password)
 
-User.__table__ # doctest: +NORMALIZE_WHITESPACE
+User.__table__
 
-User.__mapper__ # doctest: +ELLIPSIS
+User.__mapper__
 
 Base.metadata.create_all(engine)
 
@@ -45,7 +45,7 @@ session = Session()
 
 session.add(ed_user)
 
-our_user = session.query(User).filter_by(name='ed').first() # doctest:+ELLIPSIS,+NORMALIZE_WHITESPACE
+our_user = session.query(User).filter_by(name='ed').first()
 our_user
 ed_user is our_user
 
@@ -55,54 +55,54 @@ session.add_all([
     User('fred', 'Fred Flinstone', 'blah')])
 ed_user.password = 'f8s7ccs'
 session.dirty
-session.new  # doctest: +SKIP
+session.new
 session.commit()
 
-ed_user.id # doctest: +NORMALIZE_WHITESPACE
+ed_user.id
 
 ed_user.name = 'Edwardo'
 fake_user = User('fakeuser', 'Invalid', '12345')
 session.add(fake_user)
 
-session.query(User).filter(User.name.in_(['Edwardo', 'fakeuser'])).all() #doctest: +NORMALIZE_WHITESPACE
+session.query(User).filter(User.name.in_(['Edwardo', 'fakeuser'])).all()
 
 session.rollback()
-ed_user.name #doctest: +NORMALIZE_WHITESPACE
+ed_user.name
 fake_user in session
 
-session.query(User).filter(User.name.in_(['ed', 'fakeuser'])).all() #doctest: +NORMALIZE_WHITESPACE
+session.query(User).filter(User.name.in_(['ed', 'fakeuser'])).all()
 
-for instance in session.query(User).order_by(User.id): # doctest: +NORMALIZE_WHITESPACE
+for instance in session.query(User).order_by(User.id):
     print instance.name, instance.fullname
 
-for name, fullname in session.query(User.name, User.fullname): # doctest: +NORMALIZE_WHITESPACE
+for name, fullname in session.query(User.name, User.fullname):
     print name, fullname
 
-for row in session.query(User, User.name).all(): #doctest: +NORMALIZE_WHITESPACE
+for row in session.query(User, User.name).all():
    print row.User, row.name
 
-for row in session.query(User.name.label('name_label')).all(): #doctest: +NORMALIZE_WHITESPACE
+for row in session.query(User.name.label('name_label')).all():
    print(row.name_label)
 
 from sqlalchemy.orm import aliased
 user_alias = aliased(User, name='user_alias')
-for row in session.query(user_alias, user_alias.name).all(): #doctest: +NORMALIZE_WHITESPACE
+for row in session.query(user_alias, user_alias.name).all():
    print row.user_alias
 
-for u in session.query(User).order_by(User.id)[1:3]: #doctest: +NORMALIZE_WHITESPACE
+for u in session.query(User).order_by(User.id)[1:3]:
    print u
 
 for name, in session.query(User.name).\
-            filter_by(fullname='Ed Jones'): # doctest: +NORMALIZE_WHITESPACE
+            filter_by(fullname='Ed Jones'):
    print name
 
 for name, in session.query(User.name).\
-            filter(User.fullname=='Ed Jones'): # doctest: +NORMALIZE_WHITESPACE
+            filter(User.fullname=='Ed Jones'):
    print name
 
 for user in session.query(User).\
          filter(User.name=='ed').\
-         filter(User.fullname=='Ed Jones'): # doctest: +NORMALIZE_WHITESPACE
+         filter(User.fullname=='Ed Jones'):
    print user
 
 session.query(User.fullname).\
@@ -124,29 +124,29 @@ print session.query(User.name).filter(
         order_by(User.name).all()
 
 query = session.query(User).filter(User.name.like('%ed')).order_by(User.id)
-query.all() #doctest: +NORMALIZE_WHITESPACE
+query.all()
 
-query.first() #doctest: +NORMALIZE_WHITESPACE
+query.first()
 
 from sqlalchemy.orm.exc import MultipleResultsFound
-try: #doctest: +NORMALIZE_WHITESPACE
+try:
     user = query.one()
 except MultipleResultsFound, e:
     print e
 
 from sqlalchemy.orm.exc import NoResultFound
-try: #doctest: +NORMALIZE_WHITESPACE
+try:
     user = query.filter(User.id == 99).one()
 except NoResultFound, e:
     print e
 
 for user in session.query(User).\
             filter("id<224").\
-            order_by("id").all(): #doctest: +NORMALIZE_WHITESPACE
+            order_by("id").all():
     print user.name
 
 session.query(User).filter("id<:value and name=:name").\
-    params(value=224, name='fred').order_by(User.id).one() # doctest: +NORMALIZE_WHITESPACE
+    params(value=224, name='fred').order_by(User.id).one()
 
 session.query(User).from_statement(
                     "SELECT * FROM users where name=:name").\
@@ -157,14 +157,14 @@ session.query("id", "name", "thenumber12").\
                 "thenumber12 FROM users where name=:name").\
                 params(name='ed').all()
 
-session.query(User).filter(User.name.like('%ed')).count() #doctest: +NORMALIZE_WHITESPACE
+session.query(User).filter(User.name.like('%ed')).count()
 
 from sqlalchemy import func
-session.query(func.count(User.name), User.name).group_by(User.name).all()  #doctest: +NORMALIZE_WHITESPACE
+session.query(func.count(User.name), User.name).group_by(User.name).all()
 
 session.query(func.count('*')).select_from(User).scalar()
 
-session.query(func.count(User.id)).scalar() #doctest: +NORMALIZE_WHITESPACE
+session.query(func.count(User.id)).scalar()
 
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship, backref
@@ -183,7 +183,7 @@ class Address(Base):
     def __repr__(self):
         return "<Address('%s')>" % self.email_address
 
-Base.metadata.create_all(engine) # doctest: +NORMALIZE_WHITESPACE
+Base.metadata.create_all(engine)
 
 jack = User('jack', 'Jack Bean', 'gjffdd')
 jack.addresses
@@ -200,20 +200,20 @@ session.add(jack)
 session.commit()
 
 jack = session.query(User).\
-filter_by(name='jack').one() #doctest: +NORMALIZE_WHITESPACE
+filter_by(name='jack').one()
 jack
 
-jack.addresses #doctest: +NORMALIZE_WHITESPACE
+jack.addresses
 
 for u, a in session.query(User, Address).\
                     filter(User.id==Address.user_id).\
                     filter(Address.email_address=='jack@google.com').\
-                    all():   # doctest: +NORMALIZE_WHITESPACE
+                    all():
     print u, a
 
 session.query(User).join(Address).\
         filter(Address.email_address=='jack@google.com').\
-        all() #doctest: +NORMALIZE_WHITESPACE
+        all()
 
 from sqlalchemy.orm import aliased
 adalias1 = aliased(Address)
@@ -224,7 +224,7 @@ for username, email1, email2 in \
     join(adalias2, User.addresses).\
     filter(adalias1.email_address=='jack@google.com').\
     filter(adalias2.email_address=='j25@yahoo.com'):
-    print username, email1, email2      # doctest: +NORMALIZE_WHITESPACE
+    print username, email1, email2
 
 from sqlalchemy.sql import func
 stmt = session.query(Address.user_id, func.count('*').\
@@ -232,7 +232,7 @@ stmt = session.query(Address.user_id, func.count('*').\
         group_by(Address.user_id).subquery()
 
 for u, count in session.query(User, stmt.c.address_count).\
-    outerjoin(stmt, User.id==stmt.c.user_id).order_by(User.id): # doctest: +NORMALIZE_WHITESPACE
+    outerjoin(stmt, User.id==stmt.c.user_id).order_by(User.id):
     print u, count
 
 stmt = session.query(Address).\
@@ -278,7 +278,7 @@ session.query(Address).with_parent(jack, 'addresses').count()
 from sqlalchemy.orm import subqueryload
 jack = session.query(User).\
                 options(subqueryload(User.addresses)).\
-                filter_by(name='jack').one() #doctest: +NORMALIZE_WHITESPACE
+                filter_by(name='jack').one()
 jack
 
 jack.addresses
