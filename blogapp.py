@@ -53,6 +53,8 @@ ed_user.name
 ed_user.password
 str(ed_user.id)
 
+# Sessions!
+
 from sqlalchemy.orm import sessionmaker
 Session = sessionmaker(bind=engine)
 session = Session()
@@ -86,6 +88,8 @@ fake_user in session
 
 session.query(User).filter(User.name.in_(['ed', 'fakeuser'])).all()
 
+## That was Basic!
+
 # Querying, objects or named tuples:
 
 for instance in session.query(User).order_by(User.id):
@@ -109,6 +113,8 @@ for row in session.query(user_alias, user_alias.name).all():
 
 for u in session.query(User).order_by(User.id)[1:3]:
    print u
+
+# Filtering
 
 for name, in session.query(User.name).\
             filter_by(fullname='Ed Jones'):
@@ -149,6 +155,8 @@ query = session.query(User).filter(User.name.like('%ed')).order_by(User.id)
 query.all()
 
 query.first()
+
+# .one() doesn't let you have more than one result
 
 from sqlalchemy.orm.exc import MultipleResultsFound
 try:
@@ -191,6 +199,8 @@ session.query(func.count(User.name), User.name).group_by(User.name).all()
 session.query(func.count('*')).select_from(User).scalar()
 
 session.query(func.count(User.id)).scalar()
+
+## That was querying!
 
 # Relationships
 
@@ -271,6 +281,8 @@ for u, count in session.query(User, stmt.c.address_count).\
     outerjoin(stmt, User.id==stmt.c.user_id).order_by(User.id):
     print u, count
 
+# Mapping subquery results to entities
+
 stmt = session.query(Address).\
                 filter(Address.email_address != 'j25@yahoo.com').\
                 subquery()
@@ -279,7 +291,7 @@ for user, address in session.query(User, adalias).\
         join(adalias, User.addresses):
     print user, address
 
-# Exists
+# Exists, any, has - does anything match?
 
 from sqlalchemy.sql import exists
 stmt = exists().where(Address.user_id==User.id)
@@ -315,6 +327,8 @@ session.query(Address.email_address).\
 
 session.query(Address).with_parent(jack, 'addresses').count()
 
+## That was relationships
+
 # Eager loading
 
 from sqlalchemy.orm import subqueryload
@@ -344,6 +358,8 @@ jacks_addresses
 
 jacks_addresses[0].user
 
+## That was eager!
+
 # Deleting and cascading
 
 session.delete(jack)
@@ -371,6 +387,10 @@ del jack.cascading_addresses[1]
 session.query(Address).filter(
     Address.email_address.in_(['jack@google.com', 'j25@yahoo.com'])
 ).count()
+
+session.rollback()
+
+## That was deleting and cascading!
 
 # Many-to-many relationship
 
