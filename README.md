@@ -7,3 +7,4 @@ This is to accompany an *Introduction to SQLAlchemy* talk originally done by Dav
 
 To start, run `pip install -r requirements.txt` (ideally from within a clean virtual environment). The code is in doctest format in `steps.txt`, and in plain python code in `blogapp.py`. If you run `try.py` it will give you a python interpreter with hacked `readline` support that allows you to follow one line at a time (press tab on a blank line to get the next line).
 
+This is currently Python 2-compatible, but only because of print() and except and doctests - it should be easily adjustable to Python 3.
