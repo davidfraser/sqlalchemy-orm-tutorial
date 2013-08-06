@@ -21,7 +21,10 @@ class ReadLineConsole(code.InteractiveConsole):
                 readline.set_completer(self.complete)
             except ImportError:
                 pass
-            readline.parse_and_bind("tab: complete")
+            if 'libedit' in readline.__doc__:
+                readline.parse_and_bind("bind ^I rl_complete")
+            else:
+                readline.parse_and_bind("tab: complete")
 
     def complete(self, text, state):
         # print (text, self.queue_pos, self.back_search, state)
