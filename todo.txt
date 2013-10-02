@@ -1,0 +1,20 @@
+Changes to make and rebase into the starting setup
+* Make a ./nextstep.py that steps through the changes
+* In extract_code.py:
+
+ - Rearrange imports in blogapp.py to top
+
+* Incorporate try.py
+
+ - Consider bpython
+
+Slight changes to the tutorial sequence:
+* With ed_user, first explicitly commit, then show flushing
+* Actually get one() to work, not just generate errors
+
+Wording:
+* Check what to use for "record" etc
+
+Not to do:
+* Remove whitespace at end of non-result lines
+

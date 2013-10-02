@@ -10,6 +10,7 @@ def doctest_2to3_results(src_iterator):
         if line.startswith(">>>") or line.startswith("..."):
             yield line
         else:
+            # TODO: um, this happens to work for the tutorial, but isn't the most robust...
             if "u'" in line:
                 line = line.replace("u'", "'")
             if 'u"' in line:
