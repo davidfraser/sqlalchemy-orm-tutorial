@@ -4,6 +4,18 @@ import os
 import re
 import subprocess
 
+def doctest_2to3_results(src_iterator):
+    """transforms the results sections of a doctests source to fit with python3"""
+    for line in src_iterator:
+        if line.startswith(">>>") or line.startswith("..."):
+            yield line
+        else:
+            if "u'" in line:
+                line = line.replace("u'", "'")
+            if 'u"' in line:
+                line = line.replace('u"', '"')
+            yield line
+
 def extract_code(src_iterator):
     """extracts the code from a doctests source"""
     for line in src_iterator:
@@ -30,7 +42,7 @@ def extract_code(src_iterator):
 subprocess.call(["2to3", "-d", "-w", "-n", "--add-suffix=3", "-o", ".", "steps.txt"])
 
 with open("steps3.txt", "w") as fix_file, open("steps.txt3", "r") as src_file:
-    for line in src_file:
+    for line in doctest_2to3_results(src_file):
         fix_file.write(line)
 
 os.remove("steps.txt3")
