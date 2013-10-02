@@ -3,11 +3,16 @@
 import code
 import sys
 
+if sys.version_info.major >= 3:
+    SOURCE_FILE = "blogapp3.py"
+else:
+    SOURCE_FILE = "blogapp2.py"
+
 class ReadLineConsole(code.InteractiveConsole):
     BACK_CHAR = 'Z'
     def __init__(self, locals=None, filename="<console>", histfile=None):
         code.InteractiveConsole.__init__(self, locals, filename)
-        self.queue = open("blogapp.py").readlines()
+        self.queue = open(SOURCE_FILE).readlines()
         self.queue_pos = 0
         self.back_search = None
         try:

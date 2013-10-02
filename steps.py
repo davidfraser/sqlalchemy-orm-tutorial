@@ -6,6 +6,10 @@ doctest-based examples of working through the standard sqlalchemy tutorial. See 
 
 if __name__ == "__main__":
     import doctest
-    doctest.testfile("steps.txt")
+    import sys
+    if sys.version_info.major >= 3:
+        doctest.testfile("steps.txt3")
+    else:
+        doctest.testfile("steps.txt")
 
 

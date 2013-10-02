@@ -90,44 +90,44 @@ session.query(User).filter(User.name.in_(['ed', 'fakeuser'])).all()
 
 ## That was Basic!
 
-# Querying, objects or named tuples:
+# Querying, objects or named tuples (actually KeyedTuples as of sqlalchemy 0.8):
 
 for instance in session.query(User).order_by(User.id):
-    print instance.name, instance.fullname
+    print(instance.name, instance.fullname)
 
 for name, fullname in session.query(User.name, User.fullname):
-    print name, fullname
+    print(name, fullname)
 
 for row in session.query(User, User.name).all():
-   print row.User, row.name
+   print(row.User, row.name)
 
 # Aliasing query results:
 
 for row in session.query(User.name.label('name_label')).all():
-   print(row.name_label)
+   print((row.name_label))
 
 from sqlalchemy.orm import aliased
 user_alias = aliased(User, name='user_alias')
 for row in session.query(user_alias, user_alias.name).all():
-   print row.user_alias
+   print(row.user_alias)
 
 for u in session.query(User).order_by(User.id)[1:3]:
-   print u
+   print(u)
 
 # Filtering
 
 for name, in session.query(User.name).\
             filter_by(fullname='Ed Jones'):
-   print name
+   print(name)
 
 for name, in session.query(User.name).\
             filter(User.fullname=='Ed Jones'):
-   print name
+   print(name)
 
 for user in session.query(User).\
          filter(User.name=='ed').\
          filter(User.fullname=='Ed Jones'):
-   print user
+   print(user)
 
 # Combination of some common filter operations, demonstrating the SQL that they produce:
 
@@ -138,16 +138,16 @@ session.query(User.fullname).\
          filter(~User.name.in_(['jack'])).\
          order_by(User.id).all()
 
-print session.query(User.name, User.name.in_(session.query(User.name).filter(User.name.like('%ed%')))).order_by('name').all()
+print(session.query(User.name, User.name.in_(session.query(User.name).filter(User.name.like('%ed%')))).order_by('name').all())
 
-print str(session.query(User.id).filter(User.name == None).filter(User.fullname != None))
+print(str(session.query(User.id).filter(User.name == None).filter(User.fullname != None)))
 
 from sqlalchemy import and_, or_
-print session.query(User.name).filter(
+print(session.query(User.name).filter(
         and_(
             or_(User.name.like('%ed%'), User.fullname.like('%y %')),
             User.password.like('%b%'))).\
-        order_by(User.name).all()
+        order_by(User.name).all())
 
 # Different methods for handling results, requiring unique results etc:
 
@@ -161,21 +161,21 @@ query.first()
 from sqlalchemy.orm.exc import MultipleResultsFound
 try:
     user = query.one()
-except MultipleResultsFound, e:
-    print e
+except MultipleResultsFound as e:
+    print(e)
 
 from sqlalchemy.orm.exc import NoResultFound
 try:
     user = query.filter(User.id == 99).one()
-except NoResultFound, e:
-    print e
+except NoResultFound as e:
+    print(e)
 
 # Literal SQL being interspersed with generated:
 
 for user in session.query(User).\
             filter("id<224").\
             order_by("id").all():
-    print user.name
+    print(user.name)
 
 session.query(User).filter("id<:value and name=:name").\
     params(value=224, name='fred').order_by(User.id).one()
@@ -251,7 +251,7 @@ for u, a in session.query(User, Address).\
                     filter(User.id==Address.user_id).\
                     filter(Address.email_address=='jack@google.com').\
                     all():
-    print u, a
+    print(u, a)
 
 session.query(User).join(Address).\
         filter(Address.email_address=='jack@google.com').\
@@ -268,7 +268,7 @@ for username, email1, email2 in \
     join(adalias2, User.addresses).\
     filter(adalias1.email_address=='jack@google.com').\
     filter(adalias2.email_address=='j25@yahoo.com'):
-    print username, email1, email2
+    print(username, email1, email2)
 
 # Subqueries: users with address record counts
 
@@ -279,7 +279,7 @@ stmt = session.query(Address.user_id, func.count('*').\
 
 for u, count in session.query(User, stmt.c.address_count).\
     outerjoin(stmt, User.id==stmt.c.user_id).order_by(User.id):
-    print u, count
+    print(u, count)
 
 # Mapping subquery results to entities
 
@@ -289,22 +289,22 @@ stmt = session.query(Address).\
 adalias = aliased(Address, stmt)
 for user, address in session.query(User, adalias).\
         join(adalias, User.addresses):
-    print user, address
+    print(user, address)
 
 # Exists, any, has - does anything match?
 
 from sqlalchemy.sql import exists
 stmt = exists().where(Address.user_id==User.id)
 for name, in session.query(User.name).filter(stmt):
-    print name
+    print(name)
 
 for name, in session.query(User.name).\
         filter(User.addresses.any()):
-    print name
+    print(name)
 
 for name, in session.query(User.name).\
     filter(User.addresses.any(Address.email_address.like('%google%'))):
-    print name
+    print(name)
 
 session.query(Address).\
         filter(~Address.user.has(User.name=='jack')).all()
