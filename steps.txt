@@ -2,7 +2,7 @@
 
 >>> import sqlalchemy
 >>> sqlalchemy.__version__ 
-'0.7.9'
+'0.8.2'
 
 # How to connect using a database URL - you may want to use echo=True for manual testing
 
