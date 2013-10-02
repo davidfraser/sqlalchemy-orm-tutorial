@@ -110,7 +110,7 @@ False
 
 ## That was Basic!
 
-# Querying, objects or named tuples:
+# Querying, objects or named tuples (actually KeyedTuples as of sqlalchemy 0.8):
 
 >>> for instance in session.query(User).order_by(User.id): # doctest: +NORMALIZE_WHITESPACE
 ...     print instance.name, instance.fullname
