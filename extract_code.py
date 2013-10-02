@@ -39,15 +39,15 @@ def extract_code(src_iterator):
             yield "\n"
             have_break = True
 
-subprocess.call(["2to3", "-d", "-w", "-n", "--add-suffix=3", "-o", ".", "steps.txt"])
+subprocess.call(["2to3", "-d", "-w", "-n", "--add-suffix=3", "-o", ".", "steps2.txt"])
 
-with open("steps3.txt", "w") as fix_file, open("steps.txt3", "r") as src_file:
+with open("steps3.txt", "w") as fix_file, open("steps2.txt3", "r") as src_file:
     for line in doctest_2to3_results(src_file):
         fix_file.write(line)
 
-os.remove("steps.txt3")
+os.remove("steps2.txt3")
 
-with open("blogapp2.py", "w") as py_file, open("steps.txt") as steps_file:
+with open("blogapp2.py", "w") as py_file, open("steps2.txt") as steps_file:
     py_file.write("#!/usr/bin/env python\n\n")
     have_break = True
     for line in extract_code(steps_file):

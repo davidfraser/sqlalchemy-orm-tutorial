@@ -3,10 +3,7 @@
 import code
 import sys
 
-if sys.version_info.major >= 3:
-    SOURCE_FILE = "blogapp3.py"
-else:
-    SOURCE_FILE = "blogapp2.py"
+SOURCE_FILE = "blogapp%d.py" % sys.version_info.major
 
 class ReadLineConsole(code.InteractiveConsole):
     BACK_CHAR = 'Z'
